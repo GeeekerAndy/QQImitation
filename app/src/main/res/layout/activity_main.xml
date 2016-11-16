@@ -8,12 +8,20 @@
 
 
     <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:layout_above="@+id/iv_dividing"
+        android:orientation="vertical">
+        <ListView
+            android:id="@+id/lv_conversation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
     </FrameLayout>
 
     <ImageView
+        android:id="@+id/iv_dividing"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_above="@+id/rg_main_bottom"
@@ -32,6 +40,7 @@
             android:layout_weight="1"/>
 
         <RadioButton
+            android:id="@+id/rb_conversation"
             android:layout_width="54dp"
             android:layout_height="match_parent"
             android:button="@null"
@@ -41,6 +50,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"/>
         <RadioButton
+            android:id="@+id/rb_contact"
             android:layout_width="54dp"
             android:layout_height="match_parent"
             android:button="@null"
@@ -50,6 +60,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"/>
         <RadioButton
+            android:id="@+id/rb_plugin"
             android:layout_width="54dp"
             android:layout_height="match_parent"
             android:button="@null"
