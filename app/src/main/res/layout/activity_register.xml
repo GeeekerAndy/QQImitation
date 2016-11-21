@@ -17,13 +17,13 @@
         android:paddingStart="10dp">
 
         <ImageButton
-            android:id="@+id/iv_register_arrow_left"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/ibtn_register_arrow_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/ic_keyboard_arrow_left_white_18dp" />
+            android:src="@mipmap/ic_back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,14 +59,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="昵称  "
+                android:text="用户名  "
                 android:textSize="20sp"/>
             <EditText
+                android:id="@+id/et_register_username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="昵称"
+                android:hint="用户名"
                 android:textSize="20sp"/>
         </LinearLayout>
 
@@ -86,9 +87,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="密码  "
+                android:text="密码      "
                 android:textSize="20sp"/>
             <EditText
+                android:id="@+id/et_register_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -110,11 +112,14 @@
             android:text="密码由6-16位数字、字母或符号组成，不能是9位以下纯数字。"/>
 
         <Button
+            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:background="@color/gray"
+            android:enabled="false"
             android:text="注册"
-            android:clickable="false"/>
+            android:textColor="@color/dark"/>
 
     </LinearLayout>
 

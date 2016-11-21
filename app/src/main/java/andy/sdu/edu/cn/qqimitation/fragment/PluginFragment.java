@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import andy.sdu.edu.cn.qqimitation.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Andy.
+ * Plugin fragment in main activity. (动态）
  */
 public class PluginFragment extends Fragment {
 

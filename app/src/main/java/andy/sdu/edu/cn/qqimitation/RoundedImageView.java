@@ -15,6 +15,8 @@ import android.widget.ImageView;
 
 /**
  * Created by andy on 11/16/16.
+ * To show an image in a round shape.
+ * Reference from stackOverflow.
  */
 
 public class RoundedImageView extends ImageView {
