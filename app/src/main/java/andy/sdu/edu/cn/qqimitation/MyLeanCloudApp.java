@@ -6,7 +6,11 @@ import android.util.Log;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FollowCallback;
 import com.avos.avoscloud.SaveCallback;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by andy on 11/21/16.
@@ -31,6 +35,7 @@ public class MyLeanCloudApp extends Application {
 //                }
 //            }
 //        });
+
     }
 
 }

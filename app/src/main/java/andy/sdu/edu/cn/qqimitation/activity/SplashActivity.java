@@ -63,13 +63,13 @@ public class SplashActivity extends AppCompatActivity {
                                 editor.putString("password", password);
                                 editor.apply();
 
-                                SplashActivity.this.finish();
-                                startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             } else {
                                 Toast.makeText(SplashActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+                    SplashActivity.this.finish();
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 }
             }, 1000);
 

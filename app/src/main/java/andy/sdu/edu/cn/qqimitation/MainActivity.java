@@ -7,19 +7,25 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FollowCallback;
 
 import andy.sdu.edu.cn.qqimitation.activity.LoginActivity;
 import andy.sdu.edu.cn.qqimitation.activity.RegisterActivity;
@@ -27,21 +33,21 @@ import andy.sdu.edu.cn.qqimitation.fragment.ContactFragment;
 import andy.sdu.edu.cn.qqimitation.fragment.ConversationFragment;
 import andy.sdu.edu.cn.qqimitation.fragment.PluginFragment;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by Andy.
  * Main activity.
  */
 public class MainActivity extends AppCompatActivity {
 
-    private String[] mPlanetTitles = {"关于", "退出帐号"};
+    private String[] mPlanetTitles = {"帐号信息", "关于", "退出帐号"};
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 初始化参数依次为 this, AppId, AppKey
-        AVOSCloud.initialize(this,"fDREVkCDOBGnezfCQgQLdBih-gzGzoHsz","yi9HPB8FhGpGzk4BaJDeGeQn");
         setContentView(R.layout.activity_main);
 
         /*
@@ -59,16 +65,23 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(id == 0) {
                     new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("About")
-                            .setMessage("Author: Andy" + "\n" + "Time: Nov 2016" + "\n" + "Version: 1.0")
-                            .setPositiveButton("OK", null)
+                            .setTitle("Account")
+                            .setMessage(AVUser.getCurrentUser().getUsername())
+                            .setPositiveButton("Ok", null)
                             .show();
                 }
                 if(id == 1) {
                     new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("About")
+                            .setMessage("Author: Andy" + "\n" + "Time: Nov 2016" + "\n" + "Version: 1.0")
+                            .setPositiveButton("Ok", null)
+                            .show();
+                }
+                if(id == 2) {
+                    new AlertDialog.Builder(MainActivity.this)
                             .setTitle("退出帐号")
                             .setMessage("确定退出当前帐号？")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     //Delete the local username and password.

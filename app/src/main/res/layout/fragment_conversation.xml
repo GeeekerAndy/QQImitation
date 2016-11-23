@@ -11,7 +11,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/action_bar_size"
             android:background="@color/colorPrimary"
             android:orientation="horizontal"
             android:paddingStart="10dp"
@@ -32,7 +32,7 @@
                 android:textSize="20sp"
                 android:textColor="@color/white"/>
             <ImageButton
-                android:id="@+id/ibtn_add_user"
+                android:id="@+id/ibtn_add_conversation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -42,9 +42,9 @@
         </RelativeLayout>
 
         <ListView
+            android:id="@+id/lv_conversation"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         </ListView>
     </LinearLayout>
 

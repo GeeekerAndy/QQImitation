@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="60dp"
+    android:id="@+id/rl_one_user_in_list">
+    <andy.sdu.edu.cn.qqimitation.RoundedImageView
+        android:id="@+id/iv_avator_in_list"
+        android:layout_alignParentStart="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:src="@mipmap/avatar"/>
+    <TextView
+        android:id="@+id/tv_username_in_list"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:layout_toEndOf="@+id/iv_avator_in_list"
+        android:gravity="center"
+        android:text="user1"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_online_status"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:layout_alignParentEnd="true"
+        android:textSize="15sp"
+        android:text="[离线]"/>
+
+
+</RelativeLayout>

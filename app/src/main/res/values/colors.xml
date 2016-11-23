@@ -8,4 +8,5 @@
     <color name="grayBackground">#EEEEEE</color>
     <color name="dark">#000000</color>
     <color name="blueLight">#90CAF9</color>
+    <color name="red">#F44336</color>
 </resources>
