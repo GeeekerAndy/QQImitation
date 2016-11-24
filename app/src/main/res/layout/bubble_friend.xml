@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_friend_words"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:layout_toEndOf="@+id/rim_avatar_in_dialog"
+        android:background="@drawable/skin_aio_friend_bubble_pressed"
+        android:text=""
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:gravity="center"/>
+
+
+    <andy.sdu.edu.cn.qqimitation.RoundedImageView
+        android:id="@+id/rim_friend_avatar_in_dialog"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="5dp"
+        android:src="@mipmap/ic_round"/>
+
+
+</RelativeLayout>

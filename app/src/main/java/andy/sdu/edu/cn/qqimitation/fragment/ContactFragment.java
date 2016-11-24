@@ -21,6 +21,7 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.SaveCallback;
 
 import java.util.ArrayList;
@@ -146,53 +147,65 @@ public class ContactFragment extends Fragment {
      */
     public void addFriend(final String username) {
 
-        boolean isUserExists = false;
         /*
-        此处还得添加验证是否对方存在的代码！！！！
+        To check if the user exists.
+        If the user exists, he/she will never login because I use "12" as password,
+        and when registering, the password length is more than "12". Though it will cause AVException.USERNAME_PASSWORD_MISMATCH
+        But it is a efficient way by now. Just ignore the exception.
          */
-
-        AVQuery<AVObject> queryMyFriendList = new AVQuery<>(currentUsername);
-        queryMyFriendList.whereEqualTo("Friends", username);
-        queryMyFriendList.findInBackground(new FindCallback<AVObject>() {
+        AVUser.logInInBackground(username, "12", new LogInCallback<AVUser>() {
             @Override
-            public void done(List<AVObject> list, AVException e) {
-                if (list == null || list.size() == 0) {
-                    final AVObject myObject = new AVObject(currentUsername);
-                    myObject.put("Friends", username);
-                    myObject.saveInBackground(new SaveCallback() {
+            public void done(AVUser avUser, AVException e) {
+
+                if(e.getCode() == AVException.USER_DOESNOT_EXIST) {
+                    Toast.makeText(getContext(), "该用户不存在！", Toast.LENGTH_LONG).show();
+                }
+
+                //If the user exists, add he/she as a friend.
+                if(e.getCode() == AVException.USERNAME_PASSWORD_MISMATCH) {
+
+                    AVQuery<AVObject> queryMyFriendList = new AVQuery<>(currentUsername);
+                    queryMyFriendList.whereEqualTo("Friends", username);
+                    queryMyFriendList.findInBackground(new FindCallback<AVObject>() {
                         @Override
-                        public void done(AVException e) {
-                            if (e == null) {
-                                //存储成功
-                                Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+                        public void done(List<AVObject> list, AVException e) {
+                            if (list == null || list.size() == 0) {
+                                final AVObject myObject = new AVObject(currentUsername);
+                                myObject.put("Friends", username);
+                                myObject.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        if (e == null) {
+                                            //存储成功
+                                            Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            //存储失败
+                                            Toast.makeText(getContext(), "添加失败", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                                AVObject friendObject = new AVObject(username);
+                                friendObject.put("Friends", currentUsername);
+                                friendObject.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        if (e == null) {
+                                            //对方数据库存储成功
+                                            Toast.makeText(getContext(), "对方添加成功", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            //对方数据库存储失败
+                                            Toast.makeText(getContext(), "对方添加失败", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                             } else {
-                                //存储失败
-                                Toast.makeText(getContext(), "添加失败", Toast.LENGTH_SHORT).show();
+                                System.out.println("list长度：" + list.size());
+                                Toast.makeText(getContext(), "已经是好友了！", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
-                    AVObject friendObject = new AVObject(username);
-                    friendObject.put("Friends", currentUsername);
-                    friendObject.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(AVException e) {
-                            if (e == null) {
-                                //对方数据库存储成功
-                                Toast.makeText(getContext(), "对方添加成功", Toast.LENGTH_SHORT).show();
-                            } else {
-                                //对方数据库存储失败
-                                Toast.makeText(getContext(), "对方添加失败", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                } else {
-                    System.out.println("list长度：" + list.size());
-                    Toast.makeText(getContext(), "已经是好友了！", Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-
     }
-
 }
