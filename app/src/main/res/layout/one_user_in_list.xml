@@ -26,7 +26,7 @@
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"
         android:textSize="15sp"
-        android:text="[离线]"/>
+        android:text="[在线/离线]"/>
 
 
 </RelativeLayout>

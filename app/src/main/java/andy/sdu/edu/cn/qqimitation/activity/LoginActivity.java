@@ -1,5 +1,6 @@
 package andy.sdu.edu.cn.qqimitation.activity;
 
+
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         ll_login = (LinearLayout) findViewById(R.id.ll_login);
         tv_register = (TextView) findViewById(R.id.tv_register);
         btn_login = (Button) findViewById(R.id.btn_login);
-        ck_agree = (CheckBox)findViewById(R.id.ck_agree);
+        ck_agree = (CheckBox) findViewById(R.id.ck_agree);
 
 
         /*
@@ -108,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!et_username.getText().toString().equals("") && (et_password.getText().toString().length() >=6) && ck_agree.isChecked()) {
+                if (!et_username.getText().toString().equals("") && (et_password.getText().toString().length() >= 6) && ck_agree.isChecked()) {
                     btn_login.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorPrimary));
                     btn_login.setEnabled(true);
                 } else {
@@ -130,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!et_username.getText().toString().equals("") && (et_password.getText().toString().length() >=6) && ck_agree.isChecked()) {
+                if (!et_username.getText().toString().equals("") && (et_password.getText().toString().length() >= 6) && ck_agree.isChecked()) {
                     btn_login.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorPrimary));
                     btn_login.setEnabled(true);
                 } else {
@@ -147,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
         ck_agree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!et_username.getText().toString().equals("") && (et_password.getText().toString().length() >=6) && ck_agree.isChecked()) {
+                if (!et_username.getText().toString().equals("") && (et_password.getText().toString().length() >= 6) && ck_agree.isChecked()) {
                     btn_login.setBackgroundColor(ContextCompat.getColor(LoginActivity.this, R.color.colorPrimary));
                     btn_login.setEnabled(true);
                 } else {
@@ -163,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         /*
-        Show login layout dynamically.
+        Show login layout dynamically when the activity is calling onResume() method.
          */
         WindowManager windowManager = (WindowManager) LoginActivity.this.getSystemService(LoginActivity.this.WINDOW_SERVICE);
         Point size = new Point();

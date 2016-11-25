@@ -10,6 +10,10 @@ import android.widget.Button;
 import andy.sdu.edu.cn.qqimitation.MainActivity;
 import andy.sdu.edu.cn.qqimitation.R;
 
+/**
+ * If register a new user successfully, show success information and then enter MainActivity.
+ */
+
 public class RegisterSuccussActivity extends AppCompatActivity {
 
     @Override
@@ -28,6 +32,6 @@ public class RegisterSuccussActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 2000);
+        }, 1000);
     }
 }

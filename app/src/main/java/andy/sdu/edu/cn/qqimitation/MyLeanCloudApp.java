@@ -22,6 +22,7 @@ import static android.content.ContentValues.TAG;
 
 /**
  * Created by andy on 11/21/16.
+ * Initialize leancloud account.
  */
 
 public class MyLeanCloudApp extends Application {
@@ -32,7 +33,7 @@ public class MyLeanCloudApp extends Application {
     public void onCreate() {
         super.onCreate();
         // 初始化参数依次为 this, AppId, AppKey
-        AVOSCloud.initialize(this,"fDREVkCDOBGnezfCQgQLdBih-gzGzoHsz","yi9HPB8FhGpGzk4BaJDeGeQn");
+        AVOSCloud.initialize(this, "fDREVkCDOBGnezfCQgQLdBih-gzGzoHsz", "yi9HPB8FhGpGzk4BaJDeGeQn");
 
         //注册默认的消息处理逻辑
         AVIMMessageManager.registerDefaultMessageHandler(customMessageHandler);

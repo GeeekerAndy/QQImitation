@@ -2,6 +2,7 @@ package andy.sdu.edu.cn.qqimitation;
 
 /**
  * Created by andy on 11/23/16.
+ * The current user.
  */
 
 public class User {
@@ -10,6 +11,7 @@ public class User {
 
     public User(String username) {
         this.username = username;
+
     }
 
     public String getUsername() {

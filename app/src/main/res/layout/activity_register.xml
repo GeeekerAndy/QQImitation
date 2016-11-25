@@ -119,7 +119,7 @@
             android:background="@color/gray"
             android:enabled="false"
             android:text="注册"
-            android:textColor="@color/dark"/>
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 

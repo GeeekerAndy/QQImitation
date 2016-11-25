@@ -12,11 +12,11 @@
         android:paddingEnd="30dp"
         android:paddingTop="30dp"
         android:paddingBottom="30dp"
-        android:layout_toEndOf="@+id/rim_avatar_in_dialog"
-        android:background="@drawable/skin_aio_friend_bubble_pressed"
+        android:layout_toEndOf="@+id/rim_friend_avatar_in_dialog"
+        android:background="@drawable/skin_aio_friend_bubble"
         android:text=""
         android:textSize="15sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:gravity="center"/>
 
 
@@ -27,7 +27,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_margin="5dp"
-        android:src="@mipmap/ic_round"/>
+        android:src="@mipmap/ic_login"/>
 
 
 </RelativeLayout>

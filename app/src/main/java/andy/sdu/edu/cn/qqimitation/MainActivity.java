@@ -42,7 +42,7 @@ import static android.content.ContentValues.TAG;
 public class MainActivity extends AppCompatActivity {
 
     private String[] mPlanetTitles = {"帐号信息", "关于", "退出帐号"};
-    private DrawerLayout mDrawerLayout;
+    DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
     @Override
@@ -57,27 +57,28 @@ public class MainActivity extends AppCompatActivity {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+        mDrawerList.setAdapter(new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, mPlanetTitles));
-        // Set the list's click listener
+
+        // Set the list's (In drawer list) click listener
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(id == 0) {
+                if (id == 0) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("Account")
                             .setMessage(AVUser.getCurrentUser().getUsername())
                             .setPositiveButton("Ok", null)
                             .show();
                 }
-                if(id == 1) {
+                if (id == 1) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("About")
                             .setMessage("Author: Andy" + "\n" + "Time: Nov 2016" + "\n" + "Version: 1.0")
                             .setPositiveButton("Ok", null)
                             .show();
                 }
-                if(id == 2) {
+                if (id == 2) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("退出帐号")
                             .setMessage("确定退出当前帐号？")
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.add(R.id.fragment_container, conversationFragment);
         transaction.commit();
 
-        RadioButton conversationRadioButton = (RadioButton)findViewById(R.id.rb_conversation);
+        RadioButton conversationRadioButton = (RadioButton) findViewById(R.id.rb_conversation);
         conversationRadioButton.setChecked(true);
         conversationRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 transaction1.commit();
             }
         });
-        RadioButton contactRadioButton = (RadioButton)findViewById(R.id.rb_contact);
+        RadioButton contactRadioButton = (RadioButton) findViewById(R.id.rb_contact);
         contactRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 transaction2.commit();
             }
         });
-        RadioButton pluginRadioButton = (RadioButton)findViewById(R.id.rb_plugin);
+        RadioButton pluginRadioButton = (RadioButton) findViewById(R.id.rb_plugin);
         pluginRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

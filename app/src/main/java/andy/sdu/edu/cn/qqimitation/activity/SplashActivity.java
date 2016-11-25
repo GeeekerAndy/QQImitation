@@ -1,6 +1,5 @@
 package andy.sdu.edu.cn.qqimitation.activity;
 
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -19,9 +18,10 @@ import andy.sdu.edu.cn.qqimitation.R;
 
 /**
  * Created by Andy.
- * To connect Openfire server.
+ * To connect leancloud server.
  * Show an image during initializing app.
  */
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override
@@ -33,10 +33,12 @@ public class SplashActivity extends AppCompatActivity {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
+        /*
+        Storing username and password locally to enter app without logging.
+         */
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         final String username = sharedPreferences.getString("username", "");
         final String password = sharedPreferences.getString("password", "");
-
         if(username.equals("")) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -47,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
                 }
             }, 1000);
         } else {
-
+            //Show login interface.
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -71,11 +73,8 @@ public class SplashActivity extends AppCompatActivity {
                     SplashActivity.this.finish();
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 }
-            }, 1000);
-
+            }, 2000);
         }
-
-
     }
 }
 

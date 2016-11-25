@@ -43,6 +43,7 @@
         android:layout_weight="1"
         android:divider="@null"
         android:stackFromBottom="true"
+        android:background="@color/grayBackground"
         android:dividerHeight="0dp">
 
     </ListView>
