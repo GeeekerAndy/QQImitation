@@ -20,15 +20,19 @@ import com.avos.avoscloud.im.v2.AVIMMessageHandler;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
+import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 import andy.sdu.edu.cn.qqimitation.Adapter.DialogAdapter;
 import andy.sdu.edu.cn.qqimitation.R;
+
+import static java.lang.Thread.sleep;
 
 /**
  * The main window when you chat with your friend. Receive message and send message.
@@ -50,6 +54,7 @@ public class ConversationActivity extends AppCompatActivity {
     private int[] item_layout = {R.layout.bubble_mine, R.layout.bubble_friend};//布局文件数组
     private ListView lv_main_dialog;
     private DialogAdapter dialogAdapter;
+    private final MsgThread receiveMsgThread = new MsgThread();
     AVIMClient myClient;
 
     @Override
@@ -84,6 +89,7 @@ public class ConversationActivity extends AppCompatActivity {
                     addChatToListview(0, et_message_to_send.getText().toString());
                     sendMessage(et_message_to_send.getText().toString());
                     et_message_to_send.setText("");
+                    lv_main_dialog.setSelection(dialogAdapter.getCount() - 1);  //Scrolling to the latest message.
                 }
             }
         });
@@ -124,13 +130,14 @@ public class ConversationActivity extends AppCompatActivity {
             public void done(AVIMClient client, AVIMException e) {
                 if (e == null) {
                     // 创建与username之间的对话
-                    client.createConversation(Arrays.asList(username), null,
+                    client.createConversation(Arrays.asList(username), (currentUsername + "to" + username), null,
                             new AVIMConversationCreatedCallback() {
 
                                 @Override
                                 public void done(AVIMConversation conversation, AVIMException e) {
                                     if (e == null) {
                                         AVIMTextMessage msg = new AVIMTextMessage();
+                                        msg.setMessageId(currentUsername + "to" + username);
                                         msg.setText(message);
                                         // 发送消息
                                         conversation.sendMessage(msg, new AVIMConversationCallback() {
@@ -138,7 +145,7 @@ public class ConversationActivity extends AppCompatActivity {
                                             @Override
                                             public void done(AVIMException e) {
                                                 if (e == null) {
-                                                    Log.d("me to friend", "发送成功！");
+                                                    Log.d("me to " + username, "发送成功！");
                                                 }
                                             }
                                         });
@@ -175,26 +182,81 @@ public class ConversationActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("ConversationActivity", "onResume");
         myClient.open(new AVIMClientCallback() {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {
                 //Start to connect.
+                //登录成功,获取聊天记录
+
+//                AVIMConversation conv = myClient.getConversation(username);
+//                int limit = 10;// limit 取值范围 1~1000 之内的整数
+//                // 不使用 limit 默认返回 20 条消息
+//                conv.queryMessages(limit, new AVIMMessagesQueryCallback() {
+//                    @Override
+//                    public void done(List<AVIMMessage> messages, AVIMException e) {
+//                        if (e == null) {
+//                            //成功获取最新10条消息记录
+//                            for(int i = 0; i < messages.size(); i++) {
+//                                if(messages.get(1).getMessageId().equals(currentUsername + "to" + username)) {
+//                                    addChatToListview(0, ((AVIMTextMessage) messages.get(i)).getText());
+//                                } else {
+//                                    addChatToListview(1, ((AVIMTextMessage) messages.get(i)).getText());
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    if ("".equals(staticMsg)) {
-                        //do nothing.
-                    } else {
-                        receiveMessage(staticMsg);
-                        staticMsg = "";
-                    }
-                }
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        }).start();
+        receiveMsgThread.start();
+    }
 
+    /*
+    If the chat window call onPause(), stop receive message.
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        myClient.close(new AVIMClientCallback() {
+            @Override
+            public void done(AVIMClient avimClient, AVIMException e) {
+                //Stop receive message.
             }
-        }).start();
+        });
+        receiveMsgThread.interrupt();
+    }
+
+    /*
+    Thread to receive message by checking if 'staticMsg' has message.
+     */
+    public class MsgThread extends Thread {
+        public void run() {
+            while (true) {
+                if ("".equals(staticMsg)) {
+                    //do nothing.
+                } else {
+                    receiveMessage(staticMsg);
+                    staticMsg = "";
+                }
+                try {
+                    sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public synchronized void start() {
+            super.start();
+        }
     }
 
     /*
@@ -207,7 +269,10 @@ public class ConversationActivity extends AppCompatActivity {
             if (message instanceof AVIMTextMessage) {
                 String friendMsg = ((AVIMTextMessage) message).getText();
                 staticMsg = friendMsg;
-                Log.d("friend & me", friendMsg);
+
+                String friendName = conversation.getName() + conversation.getConversationId() + conversation.getCreator();
+
+                Log.d(message.getFrom() + " to me.", friendMsg);
             }
         }
 
