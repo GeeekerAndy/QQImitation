@@ -19,6 +19,8 @@ import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import andy.sdu.edu.cn.qqimitation.activity.ConversationActivity;
 
 import static android.content.ContentValues.TAG;
+import static andy.sdu.edu.cn.qqimitation.activity.ConversationActivity.staticFriendName;
+import static andy.sdu.edu.cn.qqimitation.activity.ConversationActivity.staticMsg;
 
 /**
  * Created by andy on 11/21/16.
@@ -27,7 +29,7 @@ import static android.content.ContentValues.TAG;
 
 public class MyLeanCloudApp extends Application {
 
-    public static final ConversationActivity.CustomMessageHandler customMessageHandler = new ConversationActivity.CustomMessageHandler();
+    public static final CustomMessageHandler customMessageHandler = new CustomMessageHandler();
 
     @Override
     public void onCreate() {
@@ -37,6 +39,8 @@ public class MyLeanCloudApp extends Application {
 
         //注册默认的消息处理逻辑
         AVIMMessageManager.registerDefaultMessageHandler(customMessageHandler);
+
+
 
         // 测试 SDK 是否正常工作的代码
 //        AVObject testObject = new AVObject("TestObject");
@@ -50,6 +54,27 @@ public class MyLeanCloudApp extends Application {
 //            }
 //        });
 
+    }
+
+
+    /*
+    Handler to handle message when message arrived.
+     */
+    public static class CustomMessageHandler extends AVIMMessageHandler {
+        //接收到消息后的处理逻辑
+        @Override
+        public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
+            if (message instanceof AVIMTextMessage) {
+                String friendMsg = ((AVIMTextMessage) message).getText();
+                staticMsg = friendMsg;
+                staticFriendName = message.getFrom();
+                Log.d(staticFriendName + " to me.", friendMsg);
+            }
+        }
+
+        public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
+
+        }
     }
 
 }

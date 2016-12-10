@@ -1,6 +1,14 @@
 package andy.sdu.edu.cn.qqimitation.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.nfc.Tag;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.BaseColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +30,7 @@ import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
+import com.avos.avoscloud.okhttp.internal.framed.FrameReader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +40,7 @@ import java.util.List;
 
 import andy.sdu.edu.cn.qqimitation.Adapter.DialogAdapter;
 import andy.sdu.edu.cn.qqimitation.R;
+import andy.sdu.edu.cn.qqimitation.SQLiteToStoreConversationHelper;
 
 import static java.lang.Thread.sleep;
 
@@ -40,8 +50,8 @@ import static java.lang.Thread.sleep;
 
 public class ConversationActivity extends AppCompatActivity {
 
-
-    static String staticMsg = "";    //To store the received message.
+    public static String staticMsg = "";    //To store the received message.
+    public static String staticFriendName="";
 
     private String username;
     private String currentUsername = AVUser.getCurrentUser().getUsername();
@@ -55,14 +65,28 @@ public class ConversationActivity extends AppCompatActivity {
     private ListView lv_main_dialog;
     private DialogAdapter dialogAdapter;
     private final MsgThread receiveMsgThread = new MsgThread();
+    Handler mHandler;
+
+    private SQLiteToStoreConversationHelper mDBHelper;
+    WriteConversation writeConversation = new WriteConversation();
+    ReadConversation readConversation = new ReadConversation();
+
     AVIMClient myClient;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
+
+
         myClient = AVIMClient.getInstance(currentUsername);
+        mDBHelper = new SQLiteToStoreConversationHelper(getApplicationContext());
+
+        mHandler = new Handler(Looper.getMainLooper());
+
 
         //Get friend name.
         Intent intent = getIntent();
@@ -86,7 +110,11 @@ public class ConversationActivity extends AppCompatActivity {
                 if (et_message_to_send.getText().toString().equals("")) {
 
                 } else {
-                    addChatToListview(0, et_message_to_send.getText().toString());
+                    String chat = et_message_to_send.getText().toString();
+                    addChatToListview(0, chat);
+                    String[] chatInformation = {username, "0", chat};
+//                    writeConversation.doInBackground(chatInformation);
+                    Log.d("White in DB", "Call writeConversation");
                     sendMessage(et_message_to_send.getText().toString());
                     et_message_to_send.setText("");
                     lv_main_dialog.setSelection(dialogAdapter.getCount() - 1);  //Scrolling to the latest message.
@@ -103,18 +131,60 @@ public class ConversationActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+//        //Get conversation history.
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String[][] conversationHistory = readConversation.doInBackground(username);
+////                String[][] conversationHistory= {{"1", "haha"}, {"0", "heihei"}};
+//                if(conversationHistory != null) {
+//                    int arrayLength = conversationHistory.length;
+//                    int arrayWidth = conversationHistory[0].length;
+//                    for(int i = 0; i < arrayLength; i++) {
+//                        if(conversationHistory[i][0].equals("0")) {
+//                            addChatToListview(0, conversationHistory[i][1]);
+//                        } else if (conversationHistory[i][0].equals("1")) {
+//                            addChatToListview(1, conversationHistory[i][1]);
+//                        }
+//                    }
+//                } else {
+//                    Log.d("Error", "conversationHistory is null");
+//                }
+//            }
+//        }).start();
     }
 
     /*
     将数据添加到chatList的函数实现
      */
     public void addChatToListview(int who, String chat) {
+
+//        String[] array = new String[3];
+//        if(who == 0) {
+//            array[0] = username;
+//            array[1] = currentUsername;
+//            array[2] = chat;
+//        } else if (who == 1) {
+//            array[0] = username;
+//            array[1] = username;
+//            array[2] = chat;
+//        }
+//        writeConversation.doInBackground(array);
+
         HashMap<String, Object> map = new HashMap<>();
         map.put("who", who);//通过who来决定chatList中项的布局，0为我发送的，1为好友发来的
         map.put("chat", chat);
         chatList.add(map);
         dialogAdapter.notifyDataSetChanged();
         lv_main_dialog.setSelection(dialogAdapter.getCount() - 1);  //Scrolling to the latest message.
+//        if(who == 0) {
+//            String[] chatInformation = {username,"0", chat};
+//            writeConversation.doInBackground(chatInformation);
+//        } else if (who == 1) {
+//            String[] chatInformation = {username,"1", chat};
+//            writeConversation.doInBackground(chatInformation);
+//        }
     }
 
 
@@ -160,17 +230,37 @@ public class ConversationActivity extends AppCompatActivity {
     /*
     Receive friend message from leancloud server and then show in dialog window.
      */
-    public void receiveMessage(final String message) {
+    public void receiveMessage(final String message, final String friendName) {
 
-        //currentUsername 登录
-//        AVIMClient myClient = AVIMClient.getInstance(currentUsername);
-        myClient.open(new AVIMClientCallback() {
+        /*
+        Open client to
+         */
+//        myClient.open(new AVIMClientCallback() {
+//            @Override
+//            public void done(AVIMClient avimClient, AVIMException e) {
+//                Log.d("TAG", "Call addCharToListview");
+//                addChatToListview(1, message);
+//            }
+//        });
 
+        /*
+        Method 1: runOnUiThread to pass parameters to UI thread.
+         */
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Log.d("TAG", "Call addCharToListview");
+//                    addChatToListview(1, message);
+//                }
+//            });
+        /*
+        Method 2: Handler to pass parameters to UI thread.
+         */
+        mHandler.post(new Runnable() {
             @Override
-            public void done(AVIMClient client, AVIMException e) {
-                if (e == null) {
-                        addChatToListview(1, message);
-                }
+            public void run() {
+                Log.d("TAG", "Call addCharToListview");
+                addChatToListview(1, message);
             }
         });
     }
@@ -241,9 +331,13 @@ public class ConversationActivity extends AppCompatActivity {
             while (true) {
                 if ("".equals(staticMsg)) {
                     //do nothing.
-                } else {
-                    receiveMessage(staticMsg);
+                } else if (!staticMsg.equals(null)){
+                    receiveMessage(staticMsg, staticFriendName);
+                    Log.d("TAG", "After receiveMessage");
+//                    String[] chatInformation = {staticFriendName,"1", staticMsg};
+//                    writeConversation.doInBackground(chatInformation);
                     staticMsg = "";
+                    staticFriendName = "";
                 }
                 try {
                     sleep(5);
@@ -260,24 +354,64 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     /*
-    Handler to handle message when message arrived.
+    SQLite operation to store conversation locally.
      */
-    public static class CustomMessageHandler extends AVIMMessageHandler {
-        //接收到消息后的处理逻辑
+    private class WriteConversation extends AsyncTask<String[], Void, Void> {
         @Override
-        public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
-            if (message instanceof AVIMTextMessage) {
-                String friendMsg = ((AVIMTextMessage) message).getText();
-                staticMsg = friendMsg;
+        protected Void doInBackground(String[]... params) {
+            SQLiteDatabase db = mDBHelper.getWritableDatabase();
+            String[] array = params[0];//To get the String[] from params.
+            ContentValues values = new ContentValues();
+            values.put(SQLiteToStoreConversationHelper.ConversationEntry.COLUMN_NAME_WHO, array[0]);
+            values.put(SQLiteToStoreConversationHelper.ConversationEntry.COLUMN_NAME_FROM_TO, array[1]);
+            values.put(SQLiteToStoreConversationHelper.ConversationEntry.COLUMN_NAME_CONTENT, array[2]);
 
-                String friendName = conversation.getName() + conversation.getConversationId() + conversation.getCreator();
-
-                Log.d(message.getFrom() + " to me.", friendMsg);
-            }
+            long newRowId = db.insert(SQLiteToStoreConversationHelper.ConversationEntry.TABLE_NAME, null, values);
+            Log.d("Database", "write to DB success");
+            return null;
         }
+    }
 
-        public void onMessageReceipt(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
+    private class ReadConversation extends AsyncTask<String, Void, String[][]> {
+        @Override
+        protected String[][] doInBackground(String... params) {
+            SQLiteDatabase db = mDBHelper.getReadableDatabase();
+            String[] projection = {
+//                    SQLiteToStoreConversationHelper.ConversationEntry._ID,
+                    SQLiteToStoreConversationHelper.ConversationEntry.COLUMN_NAME_FROM_TO,
+                    SQLiteToStoreConversationHelper.ConversationEntry.COLUMN_NAME_CONTENT
+            };
 
+            String selection = SQLiteToStoreConversationHelper.ConversationEntry.COLUMN_NAME_WHO + " = ?" ;
+            String arg = params[0];
+            Log.d("Params is:" , arg);
+            String[] selectionArgs = {arg};
+
+            Cursor cursor  = db.query(
+                    SQLiteToStoreConversationHelper.ConversationEntry.TABLE_NAME,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null
+                    );
+            cursor.moveToFirst();
+            int cursorLength = cursor.getCount();
+            int cursorWidth = cursor.getColumnCount();
+            if(cursorLength > 0) {
+                String[][] result = new String[cursorLength][cursorWidth];
+                for(int i  = 0; i < cursorLength; i++) {
+                    for(int j = 0; j < cursorWidth; j++) {
+                        result[i][j] = cursor.getString(j);
+                    }
+                    if(cursor.getPosition() < cursorLength) {
+                        cursor.moveToNext();
+                    }
+                }
+                return result;
+            }
+            return null;
         }
     }
 }
