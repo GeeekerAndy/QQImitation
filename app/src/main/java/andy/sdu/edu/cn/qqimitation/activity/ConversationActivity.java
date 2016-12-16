@@ -8,6 +8,7 @@ import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.BaseColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class ConversationActivity extends AppCompatActivity {
     private DialogAdapter dialogAdapter;
     private final MsgThread receiveMsgThread = new MsgThread();
     Handler mHandler;
+    Handler mHandler2;
 
     private SQLiteToStoreConversationHelper mDBHelper;
     WriteConversation writeConversation = new WriteConversation();
@@ -86,6 +88,13 @@ public class ConversationActivity extends AppCompatActivity {
         mDBHelper = new SQLiteToStoreConversationHelper(getApplicationContext());
 
         mHandler = new Handler(Looper.getMainLooper());
+        mHandler2 = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                Log.d("TAG", "Call addCharToListview");
+                addChatToListview(1, msg.obj.toString());
+            }
+        };
 
 
         //Get friend name.
@@ -153,6 +162,7 @@ public class ConversationActivity extends AppCompatActivity {
 //                }
 //            }
 //        }).start();
+
     }
 
     /*
@@ -254,15 +264,24 @@ public class ConversationActivity extends AppCompatActivity {
 //                }
 //            });
         /*
+
         Method 2: Handler to pass parameters to UI thread.
          */
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("TAG", "Call addCharToListview");
-                addChatToListview(1, message);
-            }
-        });
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d("TAG", "Call addCharToListview");
+//                addChatToListview(1, message);
+//            }
+//        });
+
+        /*
+        Method 3: Override handleMessage(Message msg);
+         */
+        Message msg = mHandler2.obtainMessage();
+        msg.obj = message;
+//        msg.sendToTarget();
+        mHandler2.sendMessage(msg);
     }
 
     /*
