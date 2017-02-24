@@ -1,3 +1,3 @@
 # QQImitation
 
-A instant messaging application as course design.
+A instant messaging application that mimics Tencent QQ.
